@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const FormFieldWrapper = styled.div`
   position: relative;
@@ -57,7 +57,22 @@ const Input = styled.input`
 
   &:focus:not([type="color"]) + span {
     transform: scale(.6) translateY(-10px);
+    color: orange;
   }
+
+  /* Template String */ /* Se  */
+  ${function temValor({ hasValue }) {
+    return hasValue && css`   /* curto-circuito */
+      &:not([type="color"]) + span {
+        transform: scale(.6) translateY(-10px);
+        color: orange;
+      }
+
+      &:not([type="color"]) {
+        border-bottom-color: var(--primary);
+      }
+    `;
+  }}
 `;
 
 function FormField({
@@ -67,17 +82,21 @@ function FormField({
   const isTextarea = type === 'textarea';
   const tag = isTextarea ? 'textarea' : 'input';
 
+  /* Se tiver algum caractere ou valor dentro do Input retorna "True" */
+  const hasValue = Boolean(value.length);
+
   return (
     <FormFieldWrapper>
       <Label
         htmlFor={fieldId}
       >
-        <Input
+        <Input /* Propriedades do Componente Input */
           as={tag}
           id={fieldId}
           type={type}
           value={value}
           name={name}
+          hasValue={hasValue}
           onChange={onChange}
         />
         <Label.Text>
